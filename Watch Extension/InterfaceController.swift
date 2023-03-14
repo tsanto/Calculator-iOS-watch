@@ -58,13 +58,17 @@ class InterfaceController: WKInterfaceController {
     ///
     private func addNotifications() {
         NotificationCenter.default.addObserver(
-            self, selector: #selector(type(of: self).dataDidFlow(_:)),
-            name: .dataDidFlow, object: nil
+            self,
+            selector: #selector(dataDidFlow(_:)),
+            name: .dataDidFlow,
+            object: nil
         )
         
         NotificationCenter.default.addObserver(
-            self, selector: #selector(type(of: self).activationDidComplete(_:)),
-            name: .activationDidComplete, object: nil
+            self,
+            selector: #selector(activationDidComplete(_:)),
+            name: .activationDidComplete,
+            object: nil
         )
     }
 
@@ -82,17 +86,18 @@ class InterfaceController: WKInterfaceController {
     /// .activationDidComplete notification handler.
     ///
     @objc func activationDidComplete(_ notification: Notification) {
-        print("\(#function): activationState:\(WCSession.default.activationState.rawValue)")
+        print("\(#function): session `activationState` is \(WCSession.default.activationState)")
     }
 
     /// Update the user interface with the command status.
     ///
     private func updateUI(with commandStatus: CommandStatus, errorMessage: String? = nil) {
         guard let payload = commandStatus.payload,
-            let multiply = payload.multiply,
-            errorMessage == nil else {
-                displayError(description: "Not connected, please open the iPhone app")
-                return
+              let multiply = payload.multiply,
+              errorMessage == nil
+        else {
+            displayError(description: "Not connected, please open the iPhone app")
+            return
         }
         
         displayResult(description: multiply.description)
@@ -108,3 +113,21 @@ class InterfaceController: WKInterfaceController {
         mainLabel.setText(description)
     }
 }
+
+extension WCSessionActivationState: CustomStringConvertible {
+
+    public var description: String {
+        switch self {
+        case .notActivated:
+            return "notActivated"
+        case .inactive:
+            return "inactive"
+        case .activated:
+            return "activated"
+        @unknown default:
+            fatalError()
+        }
+    }
+
+}
+
