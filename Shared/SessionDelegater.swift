@@ -24,6 +24,10 @@ class SessionDelegater: NSObject, WCSessionDelegate {
     /// Called when WCSession activation state is changed.
     ///
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        if let error {
+            print(#function, "Activation failed with error", error.localizedDescription)
+            return
+        }
         postNotificationOnMainQueueAsync(name: .activationDidComplete)
     }
 

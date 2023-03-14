@@ -9,7 +9,8 @@
 import WatchKit
 import WatchConnectivity
 
-class ExtensionDelegate: NSObject, WKExtensionDelegate {
+@main
+class ExtensionDelegate: NSObject, WKApplicationDelegate {
 
     private lazy var sessionDelegater: SessionDelegater = {
         return SessionDelegater()
@@ -38,10 +39,8 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
             }
         }
 
-        if WCSession.isSupported() {
-            WCSession.default.delegate = sessionDelegater
-            WCSession.default.activate()
-        }
+        WCSession.default.delegate = sessionDelegater
+        WCSession.default.activate()
     }
 
     /// Compelete the background tasks, and schedule a snapshot refresh.
@@ -55,7 +54,7 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
         wcBackgroundTasks.forEach { $0.setTaskCompletedWithSnapshot(false) }
 
         let date = Date(timeIntervalSinceNow: 1)
-        WKExtension.shared().scheduleSnapshotRefresh(withPreferredDate: date, userInfo: nil) { error in
+        WKApplication.shared().scheduleSnapshotRefresh(withPreferredDate: date, userInfo: nil) { error in
             if let error = error {
                 print("scheduleSnapshotRefresh error: \(error)!")
             }
